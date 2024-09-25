@@ -3,3 +3,4 @@ polib
 openai
 pytest
 pytest-django
+types-polib
