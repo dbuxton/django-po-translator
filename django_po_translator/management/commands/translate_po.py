@@ -1,3 +1,5 @@
+import argparse
+import json
 import logging
 import os
 from typing import List, Optional, Tuple
@@ -11,7 +13,7 @@ from openai import OpenAI
 class Command(BaseCommand):
     help = "Translate PO files using OpenAI"
 
-    def add_arguments(self, parser) -> None:
+    def add_arguments(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument("--folder", required=True, help="Input folder containing .po files")
         parser.add_argument(
             "--lang", required=True, help="Comma-separated language codes to filter .po files"
@@ -173,4 +175,27 @@ class Command(BaseCommand):
 - Make sure that the JSON you produce is correct; in particular you must make sure that newlines are formatted as \\n not as actual newlines.
 - If the text you are translating begins and/or ends with a newline, make sure that the translation does too.
 
-Please translate the following text from English into language with ISO-code `{target_language}`:"""
+Please translate the following text from English into language with ISO-code `{target_language}`: {text}
+Your JSON response:"""
+
+    def perform_translation(self, translation_request: str) -> Optional[str]:
+        """Performs the translation using the OpenAI API."""
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": translation_request}],
+            )
+            response_content = json.loads(response.choices[0].message.content)
+            if response_content.get("failed"):
+                return None
+            return str(response_content.get("translation"))
+        except Exception as e:
+            logging.error(f"Error during translation: {e}")
+            return None
+
+    def update_po_entry(self, po_file: polib.POFile, text: str, translated_text: str) -> None:
+        """Updates the PO file entry with the translated text."""
+        for entry in po_file:
+            if entry.msgid == text:
+                entry.msgstr = translated_text
+                break

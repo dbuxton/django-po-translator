@@ -6,9 +6,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="django-po-translator",
     version="0.1.0",
-    author="Your Name",
-    author_email="your.email@example.com",
-    description="A Django app for translating PO files using OpenAI",
+    author="David Buxton",
+    author_email="david@dbuxton.com",
+    description="A Django extension for translating PO files using OpenAI",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/yourusername/django-po-translator",
@@ -18,6 +18,8 @@ setup(
         "Django>=4.2",
         "polib",
         "openai",
+        "pytest",
+        "pytest-django",
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",
