@@ -185,7 +185,8 @@ Your JSON response:"""
                 model=self.model,
                 messages=[{"role": "user", "content": translation_request}],
             )
-            response_content = json.loads(response.choices[0].message.content)
+            content: str = response.choices[0].message.content
+            response_content = json.loads(content)
             if response_content.get("failed"):
                 return None
             return str(response_content.get("translation"))
