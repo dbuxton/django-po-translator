@@ -185,7 +185,8 @@ Your JSON response:"""
                 model=self.model,
                 messages=[{"role": "user", "content": translation_request}],
             )
-            content: str = response.choices[0].message.content
+            content = response.choices[0].message.content
+            assert content is not None
             response_content = json.loads(content)
             if response_content.get("failed"):
                 return None
